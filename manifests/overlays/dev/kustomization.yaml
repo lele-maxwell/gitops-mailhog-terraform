@@ -1,0 +1,32 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Metadata for this overlay
+metadata:
+  name: mailhog-dev
+
+# Reference to the base configuration
+resources:
+  - ../../base
+
+# Namespace for development environment
+namespace: mailhog-dev
+
+# Name prefix for all resources in dev
+namePrefix: dev-
+
+# Additional labels specific to dev environment
+commonLabels:
+  environment: development
+  tier: testing
+
+# Resource customizations for dev
+patchesStrategicMerge:
+  - replica-patch.yaml
+
+# ConfigMap generator for dev-specific config
+configMapGenerator:
+  - name: mailhog-config
+    literals:
+      - environment=development
+      - log-level=debug
