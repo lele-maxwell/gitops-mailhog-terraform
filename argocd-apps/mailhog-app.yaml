@@ -1,0 +1,51 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mailhog-dev
+  namespace: argocd
+  labels:
+    app: mailhog
+    environment: development
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  # Project configuration
+  project: default
+  
+  # Source configuration (Git repository)
+  source:
+    repoURL: "https://github.com/YOUR_GITHUB_USERNAME/gitops-mailhog-terraform.git"
+    targetRevision: HEAD
+    path: manifests/overlays/dev
+  
+  # Destination configuration (Kubernetes cluster)
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: mailhog-dev
+  
+  # Sync policy configuration
+  syncPolicy:
+    automated:
+      prune: true      # Remove resources not in Git
+      selfHeal: true   # Automatically fix drift
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true  # Create namespace if it doesn't exist
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+  
+  # Health check configuration
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/replicas  # Ignore replica differences (for HPA)
+  
+  # Notification configuration
+  revisionHistoryLimit: 10
