@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mailhog
+spec:
+  replicas: 1  # Single replica for development (saves resources)
+  template:
+    spec:
+      containers:
+      - name: mailhog
+        resources:
+          requests:
+            memory: "32Mi"   # Lower memory for dev
+            cpu: "25m"       # Lower CPU for dev
+          limits:
+            memory: "64Mi"   # Lower limits for dev
+            cpu: "50m"
+        env:
+        - name: MH_HOSTNAME
+          value: "mailhog-dev.local"
+        - name: MH_UI_WEB_PATH
+          value: "/dev"
