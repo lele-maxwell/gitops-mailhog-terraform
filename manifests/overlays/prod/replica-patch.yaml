@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mailhog
+spec:
+  replicas: 2  # Multiple replicas for high availability
+  template:
+    spec:
+      containers:
+      - name: mailhog
+        resources:
+          requests:
+            memory: "128Mi"   # Higher memory for prod
+            cpu: "100m"       # Higher CPU for prod
+          limits:
+            memory: "256Mi"   # Higher limits for prod
+            cpu: "200m"
+        env:
+        - name: MH_HOSTNAME
+          value: "mailhog-prod.company.com"
+        - name: MH_UI_WEB_PATH
+          value: "/mail"
+        - name: MH_STORAGE
+          value: "maildir"
+        - name: MH_MAILDIR_PATH
+          value: "/data/mailhog"
+        volumeMounts:
+        - name: mailhog-storage
+          mountPath: /data/mailhog
+      volumes:
+      - name: mailhog-storage
+        persistentVolumeClaim:
+          claimName: mailhog-pvc
