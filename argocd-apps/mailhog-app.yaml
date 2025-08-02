@@ -14,7 +14,7 @@ spec:
   
   # Source configuration (Git repository)
   source:
-    repoURL: "https://github.com/YOUR_GITHUB_USERNAME/gitops-mailhog-terraform.git"
+    repoURL: "https://github.com/lele-maxwell/gitops-mailhog-terraform.git"
     targetRevision: HEAD
     path: manifests/overlays/dev
   
